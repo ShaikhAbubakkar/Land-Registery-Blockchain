@@ -1,0 +1,318 @@
+.container {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.header {
+  background: #ffffff;
+  padding: 18px 22px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.header h1 {
+  color: #111827;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.header-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.connected {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.account {
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.btn-connect,
+.btn-disconnect,
+.btn-primary,
+.btn-secondary,
+.btn-info {
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-connect {
+  background: #1f4fa3;
+  border-color: #1f4fa3;
+  color: #ffffff;
+}
+
+.btn-connect:hover:not(:disabled) {
+  background: #1a448d;
+  border-color: #1a448d;
+}
+
+.btn-disconnect {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.btn-disconnect:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.btn-primary {
+  background: #1f4fa3;
+  border-color: #1f4fa3;
+  color: #ffffff;
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1a448d;
+  border-color: #1a448d;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #374151;
+  margin-bottom: 15px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.btn-info {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #374151;
+  margin-top: 10px;
+}
+
+.btn-info:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section {
+  width: 100%;
+}
+
+.card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.card h2 {
+  color: #111827;
+  margin-bottom: 18px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #111827;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #1f4fa3;
+  box-shadow: 0 0 0 3px rgba(31, 79, 163, 0.12);
+}
+
+.form-group input:disabled {
+  background: #f9fafb;
+  cursor: not-allowed;
+}
+
+.message {
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #eefbf3;
+  color: #0f5132;
+  border: 1px solid #b7e4c7;
+}
+
+.message.error {
+  background: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+}
+
+.message.info {
+  background: #eff6ff;
+  color: #1e3a8a;
+  border: 1px solid #bfdbfe;
+}
+
+.alert {
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.alert-warning {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+.alert-info {
+  background: #eff6ff;
+  color: #1e3a8a;
+  border: 1px solid #bfdbfe;
+}
+
+.no-data {
+  color: #6b7280;
+  text-align: center;
+  padding: 20px;
+  font-style: normal;
+}
+
+.lands-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.land-item {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.land-info {
+  margin-bottom: 15px;
+}
+
+.land-info h3 {
+  color: #111827;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.land-info p {
+  color: #4b5563;
+  font-size: 14px;
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+
+.history {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+  border: 1px solid #e5e7eb;
+}
+
+.history h4 {
+  color: #111827;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.history-item p {
+  color: #4b5563;
+  font-size: 13px;
+  margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 12px;
+  }
+}
