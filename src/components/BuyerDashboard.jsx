@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 
-function BuyerDashboard({ contract, account, userName }) {
+function BuyerDashboard({ contract, account, userName, provider }) {
   const [availableLands, setAvailableLands] = useState([])
   const [myLands, setMyLands] = useState([])
   const [myRequests, setMyRequests] = useState([])
   const [tab, setTab] = useState('browse') // browse, myPurchases, myRequests
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [ethBalance, setEthBalance] = useState('0')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -21,33 +22,33 @@ function BuyerDashboard({ contract, account, userName }) {
     loadBuyerData()
   }, [contract, account])
 
+  useEffect(() => {
+    const fetchEthBalance = async () => {
+      if (!provider || !account) return
+      try {
+        const balance = await provider.getBalance(account)
+        const ethValue = parseFloat(balance.toString()) / 1e18
+        setEthBalance(ethValue.toFixed(4))
+      } catch (error) {
+        console.error('Error fetching ETH balance:', error)
+      }
+    }
+
+    fetchEthBalance()
+    const balanceInterval = setInterval(fetchEthBalance, 10000) // Update every 10 seconds
+    return () => clearInterval(balanceInterval)
+  }, [provider, account])
+
   const loadBuyerData = async () => {
     try {
       setLoading(true)
 
       // Get available lands
       const lands = await contract.getAvailableLands()
-      setAvailableLands(lands.map((land) => ({
-        id: land.id.toString(),
-        seller: land.seller,
-        location: land.location,
-        area: land.area.toString(),
-        price: land.price.toString(),
-        imageURL: land.imageURL, // Make sure to include imageURL
-        isAvailable: Boolean(land.isAvailable)
-      })))
-
+      
       // Get buyer's lands (purchased lands)
       const buyerLands = await contract.getSellerLands(account)
-      setMyLands(buyerLands.map((land) => ({
-        id: land.id.toString(),
-        seller: land.seller,
-        location: land.location,
-        area: land.area.toString(),
-        price: land.price.toString(),
-        imageURL: land.imageURL, // Make sure to include imageURL
-        isAvailable: Boolean(land.isAvailable)
-      })))
+      const buyerLandIds = new Set(buyerLands.map((land) => land.id.toString()))
 
       // Get buyer's requests
       const requests = await contract.getBuyerRequests(account)
@@ -55,6 +56,40 @@ function BuyerDashboard({ contract, account, userName }) {
       const buyerRequests = requests.filter(
         (req) => typeof req.buyer === 'string' && req.buyer.toLowerCase() === account.toLowerCase()
       )
+      
+      // Get land IDs with pending/approved requests from this buyer
+      const requestedLandIds = new Set(
+        buyerRequests
+          .filter((req) => Number(req.status) === 0 || Number(req.status) === 1)
+          .map((req) => req.landId.toString())
+      )
+
+      // Filter available lands to exclude ones buyer owns or has requested
+      const filteredAvailableLands = lands.filter((land) => {
+        const landId = land.id.toString()
+        return !buyerLandIds.has(landId) && !requestedLandIds.has(landId)
+      })
+
+      setAvailableLands(filteredAvailableLands.map((land) => ({
+        id: land.id.toString(),
+        seller: land.seller,
+        location: land.location,
+        area: land.area.toString(),
+        price: land.price.toString(),
+        imageURL: land.imageURL,
+        isAvailable: Boolean(land.isAvailable)
+      })))
+
+      setMyLands(buyerLands.map((land) => ({
+        id: land.id.toString(),
+        seller: land.seller,
+        location: land.location,
+        area: land.area.toString(),
+        price: land.price.toString(),
+        imageURL: land.imageURL,
+        isAvailable: Boolean(land.isAvailable)
+      })))
+
       setMyRequests(buyerRequests.map((req) => ({
         id: req.id.toString(),
         landId: req.landId.toString(),
@@ -128,8 +163,14 @@ function BuyerDashboard({ contract, account, userName }) {
   return (
     <div className="dashboard buyer-dashboard">
       <div className="dashboard-header">
-        <h1>Buyer Dashboard</h1>
-        <p>Welcome, {userName}</p>
+        <div>
+          <h1>Buyer Dashboard</h1>
+          <p>Welcome, {userName}</p>
+        </div>
+        <div className="dashboard-balance">
+          <span className="balance-label">ETH Balance:</span>
+          <span className="balance-value">{ethBalance} ETH</span>
+        </div>
       </div>
 
       <div className="seller-layout">
@@ -283,7 +324,6 @@ function BuyerDashboard({ contract, account, userName }) {
                         onError={(e) => e.target.src = getPlaceholderSVG(land.id)}
                       />
                     </div>
-                    <div className="land-status">✅ Owned</div>
                     <h3>Land #{land.id}</h3>
                     <div className="land-details">
                       <p><strong>Location:</strong> {land.location}</p>
@@ -310,12 +350,20 @@ function BuyerDashboard({ contract, account, userName }) {
                     <div className="request-details">
                       <p><strong>Seller:</strong> {shortAddr(req.seller)}</p>
                       <p><strong>Amount:</strong> {formatEthPrice(req.price)} ETH</p>
-                      <p><strong>Status:</strong> {
-                        req.status === 0 ? '⏳ Pending - Waiting for seller approval' :
-                        req.status === 1 ? '✅ Approved - Ready for finalization' :
-                        req.status === 2 ? '❌ Rejected' : '🎉 Completed - Land transferred'
-                      }</p>
-                      <p><strong>Payment:</strong> {req.paymentReceived ? '✅ Sent' : '⏳ Pending'}</p>
+                      <div className="request-status-row">
+                        <span className="request-label"><strong>Status:</strong></span>
+                        <span className={`status-badge status-${req.status === 0 ? 'pending' : req.status === 1 ? 'approved' : req.status === 2 ? 'rejected' : 'completed'}`}>
+                          {req.status === 0 ? 'Pending - Waiting for seller approval' :
+                           req.status === 1 ? 'Approved - Ready for finalization' :
+                           req.status === 2 ? 'Rejected' : 'Completed - Land transferred'}
+                        </span>
+                      </div>
+                      <div className="request-status-row">
+                        <span className="request-label"><strong>Payment:</strong></span>
+                        <span className={`status-badge status-${req.paymentReceived ? 'success' : 'pending'}`}>
+                          {req.paymentReceived ? 'Sent' : 'Pending'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}

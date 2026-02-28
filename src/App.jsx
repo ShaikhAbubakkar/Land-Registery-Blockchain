@@ -250,16 +250,32 @@ function App() {
             <Registration contract={contract} onRegisterSuccess={handleRegistrationSuccess} />
           ) : userRole === 'seller' ? (
             // Seller dashboard
-            <SellerDashboard contract={contract} account={account} userName={userName} />
+            <SellerDashboard contract={contract} account={account} userName={userName} provider={provider} />
           ) : userRole === 'buyer' ? (
             // Buyer dashboard
-            <BuyerDashboard contract={contract} account={account} userName={userName} />
+            <BuyerDashboard contract={contract} account={account} userName={userName} provider={provider} />
           ) : userRole === 'inspector' ? (
             // Inspector dashboard
             <InspectorDashboard contract={contract} account={account} />
           ) : null}
         </>
       )}
+
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-left">
+            <span className="footer-brand">TerraLedger</span>
+            <span className="footer-divider">•</span>
+            <span className="footer-text">Blockchain Land Registry</span>
+          </div>
+          <div className="footer-center">
+            <span className="footer-text">Building secure property ownership on blockchain</span>
+          </div>
+          <div className="footer-right">
+            <span className="footer-text">&copy; {new Date().getFullYear()} TerraLedger. All rights reserved.</span>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

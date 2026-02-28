@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 
-function SellerDashboard({ contract, account, userName }) {
+function SellerDashboard({ contract, account, userName, provider }) {
   const [lands, setLands] = useState([])
   const [requests, setRequests] = useState([])
   const [tab, setTab] = useState('myLands') // myLands, addLand, requests
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [ethBalance, setEthBalance] = useState('0')
   const [formData, setFormData] = useState({
     location: '',
     area: '',
@@ -116,6 +117,23 @@ function SellerDashboard({ contract, account, userName }) {
     loadSellerData()
   }, [contract, account])
 
+  useEffect(() => {
+    const fetchEthBalance = async () => {
+      if (!provider || !account) return
+      try {
+        const balance = await provider.getBalance(account)
+        const ethValue = parseFloat(balance.toString()) / 1e18
+        setEthBalance(ethValue.toFixed(4))
+      } catch (error) {
+        console.error('Error fetching ETH balance:', error)
+      }
+    }
+
+    fetchEthBalance()
+    const balanceInterval = setInterval(fetchEthBalance, 10000) // Update every 10 seconds
+    return () => clearInterval(balanceInterval)
+  }, [provider, account])
+
   const loadSellerData = async () => {
     try {
       setLoading(true)
@@ -211,8 +229,14 @@ function SellerDashboard({ contract, account, userName }) {
   return (
     <div className="dashboard seller-dashboard">
       <div className="dashboard-header">
-        <h1>Seller Dashboard</h1>
-        <p>Welcome, {userName}</p>
+        <div>
+          <h1>Seller Dashboard</h1>
+          <p>Welcome, {userName}</p>
+        </div>
+        <div className="dashboard-balance">
+          <span className="balance-label">ETH Balance:</span>
+          <span className="balance-value">{ethBalance} ETH</span>
+        </div>
       </div>
 
       <div className="seller-layout">
