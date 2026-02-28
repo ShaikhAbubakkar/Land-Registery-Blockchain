@@ -3,7 +3,7 @@
 
 // V1 (Simple direct transfer - deprecated, kept for reference)
 export const CONTRACT_CONFIG_V1 = {
-  ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  ADDRESS: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
   NETWORK: {
     name: "localhost",
     chainId: 1337,
@@ -14,7 +14,7 @@ export const CONTRACT_CONFIG_V1 = {
 // V2 (Role-based with approval workflow)
 export const CONTRACT_CONFIG = {
   VERSION: "V2",
-  ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  ADDRESS: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
   INSPECTOR_ADDRESS: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
   NETWORK: {
     name: "localhost",

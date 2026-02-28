@@ -46,6 +46,7 @@ contract LandRegistryV2 {
     address public inspector;
     address public contractOwner;
     
+    address[] public registeredUsers;
     mapping(address => User) public users;
     mapping(uint256 => Land) public lands;
     mapping(uint256 => LandRequest) public landRequests;
@@ -124,6 +125,8 @@ contract LandRegistryV2 {
             registrationDate: block.timestamp
         });
         
+        registeredUsers.push(msg.sender);
+        
         emit UserRegistered(msg.sender, _role, _name);
     }
     
@@ -139,6 +142,29 @@ contract LandRegistryV2 {
     function getUser(address _userAddress) public view returns (User memory) {
         require(users[_userAddress].walletAddress != address(0), "User not found");
         return users[_userAddress];
+    }
+    
+    function getUnverifiedUsers() public view returns (User[] memory) {
+        uint256 count = 0;
+        
+        // Count unverified users
+        for (uint256 i = 0; i < registeredUsers.length; i++) {
+            if (!users[registeredUsers[i]].isVerified) {
+                count++;
+            }
+        }
+        
+        User[] memory unverified = new User[](count);
+        uint256 index = 0;
+        
+        for (uint256 i = 0; i < registeredUsers.length; i++) {
+            if (!users[registeredUsers[i]].isVerified) {
+                unverified[index] = users[registeredUsers[i]];
+                index++;
+            }
+        }
+        
+        return unverified;
     }
     
     // ============ LAND MANAGEMENT ============
@@ -307,22 +333,35 @@ contract LandRegistryV2 {
         
         // Transfer land ownership
         Land storage land = lands[request.landId];
+        address originalSeller = request.seller;
+        uint256 landId = request.landId;
+        
+        // Remove land from old seller's userLands
+        uint256[] storage oldSellerLands = userLands[originalSeller];
+        for (uint256 i = 0; i < oldSellerLands.length; i++) {
+            if (oldSellerLands[i] == landId) {
+                oldSellerLands[i] = oldSellerLands[oldSellerLands.length - 1];
+                oldSellerLands.pop();
+                break;
+            }
+        }
+        
+        // Update land ownership
         land.seller = request.buyer;
         land.isAvailable = true;
         
-        // Update user lands
-        userLands[request.buyer].push(request.landId);
+        // Add land to new owner's userLands
+        userLands[request.buyer].push(landId);
         
         // Mark request as completed
         request.status = LandRequestStatus.Completed;
         request.completedDate = block.timestamp;
         
         // Release payment to original seller
-        address originalSeller = request.seller;
         (bool success, ) = originalSeller.call{value: request.price}("");
         require(success, "Payment to seller failed");
         
-        emit TransferFinalized(_requestId, request.landId, request.buyer);
+        emit TransferFinalized(_requestId, landId, request.buyer);
     }
     
     // ============ VIEW FUNCTIONS ============

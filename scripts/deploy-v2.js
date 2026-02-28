@@ -1,4 +1,6 @@
 import hre from "hardhat";
+import fs from "fs";
+import path from "path";
 
 async function main() {
   console.log("Deploying LandRegistryV2 contract...\n");
@@ -21,9 +23,18 @@ async function main() {
   console.log("Contract Address:", address);
   console.log("Inspector Address:", inspector.address);
   console.log("");
-  console.log("📝 Update these in src/config.js:");
-  console.log(`  V2_ADDRESS: "${address}"`);
-  console.log(`  INSPECTOR_ADDRESS: "${inspector.address}"`);
+
+  const configPath = path.join(process.cwd(), "src", "config.js");
+  const configRaw = fs.readFileSync(configPath, "utf-8");
+
+  const updatedConfig = configRaw
+    .replace(/(export const CONTRACT_CONFIG = \{[\s\S]*?ADDRESS:\s*")[^"]+("[,\s\S]*?INSPECTOR_ADDRESS:\s*")[^"]+("[\s\S]*?\})/m, `$1${address}$2${inspector.address}$3`);
+
+  fs.writeFileSync(configPath, updatedConfig, "utf-8");
+
+  console.log("✅ src/config.js updated automatically");
+  console.log(`  CONTRACT_CONFIG.ADDRESS: "${address}"`);
+  console.log(`  CONTRACT_CONFIG.INSPECTOR_ADDRESS: "${inspector.address}"`);
 }
 
 main().catch((error) => {

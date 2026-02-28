@@ -38,8 +38,8 @@
       ]
     },
     "/home/abubakkar/Desktop/BDLT-MP-v2/contracts/LandRegistryV2.sol": {
-      "lastModificationDate": 1772242390098,
-      "contentHash": "669c5e6e649edf94383369fdbeadc74b",
+      "lastModificationDate": 1772261613009,
+      "contentHash": "85d6f78fb59bdeca318a1f1f6ce6b686",
       "sourceName": "contracts/LandRegistryV2.sol",
       "solcConfig": {
         "version": "0.8.20",
