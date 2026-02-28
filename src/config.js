@@ -14,7 +14,7 @@ export const CONTRACT_CONFIG_V1 = {
 // V2 (Role-based with approval workflow)
 export const CONTRACT_CONFIG = {
   VERSION: "V2",
-  ADDRESS: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+  ADDRESS: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
   INSPECTOR_ADDRESS: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
   NETWORK: {
     name: "localhost",
