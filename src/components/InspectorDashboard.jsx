@@ -4,6 +4,7 @@ function InspectorDashboard({ contract, account }) {
   const [unverifiedUsers, setUnverifiedUsers] = useState([])
   const [pendingApprovedRequests, setPendingApprovedRequests] = useState([])
   const [tab, setTab] = useState('users') // users, transfers
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [userRoles, setUserRoles] = useState({})
@@ -61,11 +62,11 @@ function InspectorDashboard({ contract, account }) {
       setPendingApprovedRequests(approvedRequests)
       
       if (unverified.length === 0 && message === '') {
-        setMessage('✅ All users are verified!')
+        setMessage('All users are verified!')
       }
     } catch (error) {
       console.error('Error loading inspector data:', error)
-      setMessage(`❌ Error loading data: ${error.reason || error.message}`)
+      setMessage(`Error loading data: ${error.reason || error.message}`)
     } finally {
       setLoading(false)
     }
@@ -80,10 +81,10 @@ function InspectorDashboard({ contract, account }) {
       setMessage('Verifying user... Please wait')
       await tx.wait()
       
-      setMessage(`✅ User ${userAddress.substring(0, 6)}... verified successfully!`)
+      setMessage(`User ${userAddress.substring(0, 6)}... verified successfully!`)
       await loadInspectorData()
     } catch (error) {
-      setMessage(`❌ Error: ${error.reason || error.message}`)
+      setMessage(`Error: ${error.reason || error.message}`)
     } finally {
       setLoading(false)
     }
@@ -98,10 +99,10 @@ function InspectorDashboard({ contract, account }) {
       setMessage('Finalizing transfer... Please wait')
       await tx.wait()
       
-      setMessage(`✅ Transfer #${requestId} finalized successfully!`)
+      setMessage(`Transfer #${requestId} finalized successfully!`)
       await loadInspectorData()
     } catch (error) {
-      setMessage(`❌ Error: ${error.reason || error.message}`)
+      setMessage(`Error: ${error.reason || error.message}`)
     } finally {
       setLoading(false)
     }
@@ -119,35 +120,64 @@ function InspectorDashboard({ contract, account }) {
         <p>Manage user verification and finalize transfers</p>
       </div>
 
-      <div className="dashboard-tabs">
-        <button
-          className={`tab-btn ${tab === 'users' ? 'active' : ''}`}
-          onClick={() => setTab('users')}
-        >
-          Verify Users ({unverifiedUsers.length})
-        </button>
-        <button
-          className={`tab-btn ${tab === 'transfers' ? 'active' : ''}`}
-          onClick={() => setTab('transfers')}
-        >
-          Finalize Transfers
-        </button>
-      </div>
+      <div className="seller-layout">
+        <aside className={`seller-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+          <div className="seller-sidebar-header">
+            {!sidebarCollapsed && <span>Navigation</span>}
+            <button
+              type="button"
+              className="seller-sidebar-toggle"
+              onClick={() => setSidebarCollapsed((prev) => !prev)}
+            >
+              {sidebarCollapsed ? '»' : '«'}
+            </button>
+          </div>
 
-      <div className="dashboard-content">
+          <button
+            className={`seller-nav-btn ${tab === 'users' ? 'active' : ''}`}
+            onClick={() => setTab('users')}
+            title="Verify Users"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>Verify Users ({unverifiedUsers.length})</span>}
+          </button>
+          <button
+            className={`seller-nav-btn ${tab === 'transfers' ? 'active' : ''}`}
+            onClick={() => setTab('transfers')}
+            title="Finalize Transfers"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 0 1 14.85-4.95M23 20v-6h-6" />
+                <path d="M20.49 9A9 9 0 0 1 5.64 13.05" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>Finalize Transfers</span>}
+          </button>
+        </aside>
+
+        <div className="dashboard-content seller-main-content">
         {tab === 'users' && (
           <div>
             <h2>Unverified Users</h2>
             
             {message && (
-              <div className={`message ${message.includes('❌') ? 'error' : 'success'}`}>
+              <div className={`message ${message.includes('verified') || message.includes('finalized') ? 'success' : 'error'}`}>
                 {message}
               </div>
             )}
 
             {unverifiedUsers.length === 0 ? (
               <div className="info-box">
-                <p>✅ No unverified users. All registered users have been verified!</p>
+                <p>No unverified users. All registered users have been verified!</p>
               </div>
             ) : (
               <div className="users-list">
@@ -190,14 +220,9 @@ function InspectorDashboard({ contract, account }) {
               </div>
             )}
 
-            <div className="info-box">
-              <p>This section shows approved land requests ready for transfer finalization.</p>
-              <p>Once a seller approves a buyer's request, you can finalize the transfer here to complete the sale.</p>
-            </div>
-
             {pendingApprovedRequests.length === 0 ? (
               <div className="info-box">
-                <p>✅ No pending transfers at this time.</p>
+                <p>No pending transfers at this time.</p>
               </div>
             ) : (
               <div className="transfers-list">
@@ -216,7 +241,7 @@ function InspectorDashboard({ contract, account }) {
                       onClick={() => handleFinalizeTransfer(request.id)}
                       disabled={loading}
                     >
-                      {loading ? 'Finalizing...' : '✓ Finalize Transfer'}
+                      {loading ? 'Finalizing...' : 'Finalize Transfer'}
                     </button>
                   </div>
                 ))}
@@ -224,6 +249,7 @@ function InspectorDashboard({ contract, account }) {
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   )

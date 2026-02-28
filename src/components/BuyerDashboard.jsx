@@ -6,6 +6,7 @@ function BuyerDashboard({ contract, account, userName }) {
   const [myLands, setMyLands] = useState([])
   const [myRequests, setMyRequests] = useState([])
   const [tab, setTab] = useState('browse') // browse, myPurchases, myRequests
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -88,10 +89,10 @@ function BuyerDashboard({ contract, account, userName }) {
       setShowConfirmModal(false)
       await tx.wait()
       
-      setMessage('✅ Request sent! Waiting for seller approval.')
+      setMessage('Request sent! Waiting for seller approval.')
       loadBuyerData()
     } catch (error) {
-      setMessage(`❌ Error: ${error.reason || error.message}`)
+      setMessage(`Error: ${error.reason || error.message}`)
     } finally {
       setLoading(false)
       setSelectedLand(null)
@@ -131,28 +132,60 @@ function BuyerDashboard({ contract, account, userName }) {
         <p>Welcome, {userName}</p>
       </div>
 
-      <div className="dashboard-tabs">
-        <button
-          className={`tab-btn ${tab === 'browse' ? 'active' : ''}`}
-          onClick={() => setTab('browse')}
-        >
-          Browse Lands ({availableLands.length})
-        </button>
-        <button
-          className={`tab-btn ${tab === 'myPurchases' ? 'active' : ''}`}
-          onClick={() => setTab('myPurchases')}
-        >
-          My Purchases ({myLands.length})
-        </button>
-        <button
-          className={`tab-btn ${tab === 'myRequests' ? 'active' : ''}`}
-          onClick={() => setTab('myRequests')}
-        >
-          My Requests ({myRequests.length})
-        </button>
-      </div>
+      <div className="seller-layout">
+        <aside className={`seller-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+          <div className="seller-sidebar-header">
+            {!sidebarCollapsed && <span>Navigation</span>}
+            <button
+              type="button"
+              className="seller-sidebar-toggle"
+              onClick={() => setSidebarCollapsed((prev) => !prev)}
+            >
+              {sidebarCollapsed ? '»' : '«'}
+            </button>
+          </div>
 
-      <div className="dashboard-content">
+          <button
+            className={`seller-nav-btn ${tab === 'browse' ? 'active' : ''}`}
+            onClick={() => setTab('browse')}
+            title="Browse Lands"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>Browse Lands ({availableLands.length})</span>}
+          </button>
+          <button
+            className={`seller-nav-btn ${tab === 'myPurchases' ? 'active' : ''}`}
+            onClick={() => setTab('myPurchases')}
+            title="My Purchases"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 1H5a4 4 0 0 0-4 4v4h4v12a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4v-4h-4V5a4 4 0 0 0-4-4z" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>My Purchases ({myLands.length})</span>}
+          </button>
+          <button
+            className={`seller-nav-btn ${tab === 'myRequests' ? 'active' : ''}`}
+            onClick={() => setTab('myRequests')}
+            title="My Requests"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>My Requests ({myRequests.length})</span>}
+          </button>
+        </aside>
+
+        <div className="dashboard-content seller-main-content">
         {tab === 'browse' && (
           <div>
             <h2>Available Lands</h2>
@@ -189,7 +222,7 @@ function BuyerDashboard({ contract, account, userName }) {
             )}
 
             {message && (
-              <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
+              <div className={`message ${message.includes('sent') ? 'success' : 'error'}`}>
                 {message}
               </div>
             )}
@@ -290,6 +323,7 @@ function BuyerDashboard({ contract, account, userName }) {
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   )

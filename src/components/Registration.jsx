@@ -67,7 +67,7 @@ function Registration({ contract, onRegisterSuccess }) {
   return (
     <div className="registration-container">
       <div className="registration-card">
-        <h1>Land Registry</h1>
+        <h1>TerraLedger</h1>
         <p className="subtitle">Choose your role to get started</p>
 
         {step === 'roleSelect' && (

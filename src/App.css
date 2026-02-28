@@ -1,6 +1,7 @@
 .container {
   min-height: 100vh;
-  padding: 24px;
+  padding: 0;
+  background: #f3f4f6;
 }
 
 /* ============ ALERT STYLES ============ */
@@ -33,13 +34,14 @@
 
 .header {
   background: #ffffff;
-  padding: 18px 22px;
-  border-radius: 8px;
+  padding: 16px 24px;
+  border-radius: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  border: 1px solid #e5e7eb;
+  margin-bottom: 0;
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .header h1 {
@@ -229,18 +231,19 @@
   align-items: center;
   justify-content: center;
   min-height: 80vh;
-  padding: 20px;
+  padding: 24px;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .registration-card {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  border-radius: 0;
+  box-shadow: none;
   padding: 40px;
   max-width: 600px;
   width: 100%;
   text-align: center;
+  border: 1px solid #e5e7eb;
 }
 
 .registration-card h1 {
@@ -298,8 +301,8 @@
 
 .role-btn:hover {
   border-color: #3b82f6;
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
-  transform: translateY(-2px);
+  box-shadow: none;
+  transform: none;
 }
 
 .role-icon {
@@ -376,16 +379,17 @@
 /* ============ DASHBOARD STYLES ============ */
 
 .dashboard {
-  max-width: 1400px;
-  margin: 20px auto;
+  max-width: 100%;
+  margin: 0;
 }
 
 .dashboard-header {
   background: white;
   padding: 24px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  margin-bottom: 20px;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 0;
 }
 
 .dashboard-header h1 {
@@ -403,11 +407,12 @@
 .dashboard-tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   background: white;
   padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .tab-btn {
@@ -436,8 +441,8 @@
 .dashboard-content {
   background: white;
   padding: 24px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border-radius: 0;
+  border: 0;
 }
 
 .dashboard-content h2 {
@@ -445,6 +450,93 @@
   font-size: 20px;
   margin-bottom: 20px;
   font-weight: 700;
+}
+
+.seller-layout {
+  display: flex;
+  min-height: calc(100vh - 220px);
+}
+
+.seller-sidebar {
+  width: 280px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: width 0.2s ease;
+}
+
+.seller-sidebar.collapsed {
+  width: 76px;
+}
+
+.seller-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px 10px;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 6px;
+}
+
+.seller-sidebar-toggle {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  color: #374151;
+  font-weight: 700;
+}
+
+.seller-nav-btn {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #1f2937;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.seller-nav-btn:hover {
+  border-color: #1f4fa3;
+  color: #1f4fa3;
+}
+
+.seller-nav-btn.active {
+  background: #1f4fa3;
+  border-color: #1f4fa3;
+  color: #ffffff;
+}
+
+.seller-nav-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.seller-nav-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.seller-main-content {
+  flex: 1;
 }
 
 /* Grid for lands */
@@ -604,6 +696,7 @@
   .header {
     flex-direction: column;
     gap: 12px;
+    padding: 14px 16px;
   }
 
   .connected {
@@ -624,6 +717,22 @@
 
   .lands-grid {
     grid-template-columns: 1fr;
+  }
+
+  .seller-layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .seller-sidebar,
+  .seller-sidebar.collapsed {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .seller-nav-btn {
+    width: 100%;
   }
 
   .dashboard-tabs {

@@ -199,7 +199,7 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1>Land Registry</h1>
+        <h1>TerraLedger</h1>
         <div className="header-right">
           <details className="infra-dropdown" ref={infraDropdownRef}>
             <summary>Network & Contract</summary>

@@ -4,6 +4,7 @@ function SellerDashboard({ contract, account, userName }) {
   const [lands, setLands] = useState([])
   const [requests, setRequests] = useState([])
   const [tab, setTab] = useState('myLands') // myLands, addLand, requests
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [formData, setFormData] = useState({
     location: '',
     area: '',
@@ -22,10 +23,10 @@ function SellerDashboard({ contract, account, userName }) {
 
   const getRequestStatusLabel = (status) => {
     const statusNum = Number(status)
-    if (statusNum === 0) return '⏳ Pending'
-    if (statusNum === 1) return '✅ Approved'
-    if (statusNum === 2) return '❌ Rejected'
-    return '🎉 Completed'
+    if (statusNum === 0) return 'Pending'
+    if (statusNum === 1) return 'Approved'
+    if (statusNum === 2) return 'Rejected'
+    return 'Completed'
   }
 
   const getPlaceholderSVG = (landId) => {
@@ -52,7 +53,7 @@ function SellerDashboard({ contract, account, userName }) {
 
     // Check file size (limit to 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      setMessage('❌ Image too large. Max 2MB')
+      setMessage('Image too large. Max 2MB')
       return
     }
 
@@ -95,18 +96,18 @@ function SellerDashboard({ contract, account, userName }) {
           localStorage.setItem(generatedImageKey, compressedBase64)
           setImageKey(generatedImageKey) // Store key in separate state
           setImagePreview(compressedBase64)
-          setMessage('✅ Image ready (stored locally)')
+          setMessage('Image ready (stored locally)')
         } catch (e) {
-          setMessage('❌ Error storing image in browser')
+          setMessage('Error storing image in browser')
         }
       }
       img.onerror = () => {
-        setMessage('❌ Error loading image')
+        setMessage('Error loading image')
       }
       img.src = event.target?.result
     }
     reader.onerror = () => {
-      setMessage('❌ Error reading image file')
+      setMessage('Error reading image file')
     }
     reader.readAsDataURL(file)
   }
@@ -176,14 +177,14 @@ function SellerDashboard({ contract, account, userName }) {
       setMessage('Adding land... Please wait')
       await tx.wait()
       
-      setMessage('✅ Land added successfully!')
+      setMessage('Land added successfully')
       setFormData({ location: '', area: '', price: '', imageURL: '' })
       setImagePreview(null)
       setImageKey(null) // Clear image key
       setTab('myLands')
       loadSellerData()
     } catch (error) {
-      setMessage(`❌ Error: ${error.reason || error.message}`)
+      setMessage(`Error: ${error.reason || error.message}`)
     } finally {
       setLoading(false)
     }
@@ -198,10 +199,10 @@ function SellerDashboard({ contract, account, userName }) {
       setMessage('Approving request... Please wait')
       await tx.wait()
       
-      setMessage('✅ Request approved!')
+      setMessage('Request approved')
       loadSellerData()
     } catch (error) {
-      setMessage(`❌ Error: ${error.reason || error.message}`)
+      setMessage(`Error: ${error.reason || error.message}`)
     } finally {
       setLoading(false)
     }
@@ -214,28 +215,61 @@ function SellerDashboard({ contract, account, userName }) {
         <p>Welcome, {userName}</p>
       </div>
 
-      <div className="dashboard-tabs">
-        <button
-          className={`tab-btn ${tab === 'myLands' ? 'active' : ''}`}
-          onClick={() => setTab('myLands')}
-        >
-          My Lands ({lands.length})
-        </button>
-        <button
-          className={`tab-btn ${tab === 'addLand' ? 'active' : ''}`}
-          onClick={() => setTab('addLand')}
-        >
-          Add Land
-        </button>
-        <button
-          className={`tab-btn ${tab === 'requests' ? 'active' : ''}`}
-          onClick={() => setTab('requests')}
-        >
-          Buyers Requests ({requests.length})
-        </button>
-      </div>
+      <div className="seller-layout">
+        <aside className={`seller-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+          <div className="seller-sidebar-header">
+            {!sidebarCollapsed && <span>Navigation</span>}
+            <button
+              type="button"
+              className="seller-sidebar-toggle"
+              onClick={() => setSidebarCollapsed((prev) => !prev)}
+            >
+              {sidebarCollapsed ? '»' : '«'}
+            </button>
+          </div>
 
-      <div className="dashboard-content">
+          <button
+            className={`seller-nav-btn ${tab === 'myLands' ? 'active' : ''}`}
+            onClick={() => setTab('myLands')}
+            title="My Lands"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 17l6-6 4 4 7-7" />
+                <path d="M14 8h6v6" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>My Lands ({lands.length})</span>}
+          </button>
+          <button
+            className={`seller-nav-btn ${tab === 'addLand' ? 'active' : ''}`}
+            onClick={() => setTab('addLand')}
+            title="Add Land"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 5v14" />
+                <path d="M5 12h14" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>Add Land</span>}
+          </button>
+          <button
+            className={`seller-nav-btn ${tab === 'requests' ? 'active' : ''}`}
+            onClick={() => setTab('requests')}
+            title="Buyers Requests"
+          >
+            <span className="seller-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 8l9 6 9-6" />
+              </svg>
+            </span>
+            {!sidebarCollapsed && <span>Buyers Requests ({requests.length})</span>}
+          </button>
+        </aside>
+
+        <div className="dashboard-content seller-main-content">
         {tab === 'myLands' && (
           <div>
             <h2>My Lands</h2>
@@ -323,7 +357,7 @@ function SellerDashboard({ contract, account, userName }) {
             </form>
 
             {message && (
-              <div className={`message ${message.includes('✅') ? 'success' : message.includes('Error') ? 'error' : 'info'}`}>
+              <div className={`message ${message.includes('successfully') ? 'success' : message.includes('Error') ? 'error' : 'info'}`}>
                 {message}
               </div>
             )}
@@ -361,12 +395,13 @@ function SellerDashboard({ contract, account, userName }) {
             )}
 
             {message && (
-              <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
+              <div className={`message ${message.includes('approved') ? 'success' : 'error'}`}>
                 {message}
               </div>
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   )
