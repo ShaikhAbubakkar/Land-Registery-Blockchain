@@ -36,6 +36,42 @@
       "artifacts": [
         "LandRegistry"
       ]
+    },
+    "/home/abubakkar/Desktop/BDLT-MP-v2/contracts/LandRegistryV2.sol": {
+      "lastModificationDate": 1772242390098,
+      "contentHash": "669c5e6e649edf94383369fdbeadc74b",
+      "sourceName": "contracts/LandRegistryV2.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "LandRegistryV2"
+      ]
     }
   }
 }

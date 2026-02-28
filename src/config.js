@@ -1,11 +1,21 @@
-// Configuration for the deployed contract
-// Update this file with your contract address after deployment
+// Configuration for the deployed contracts
+// Update this file with contract addresses after deployment
 
+// V1 (Simple direct transfer - deprecated, kept for reference)
+export const CONTRACT_CONFIG_V1 = {
+  ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  NETWORK: {
+    name: "localhost",
+    chainId: 1337,
+    rpcUrl: "http://127.0.0.1:8545"
+  }
+}
+
+// V2 (Role-based with approval workflow)
 export const CONTRACT_CONFIG = {
-  // Update this with your deployed contract address
-  ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3", // e.g., "0x..."
-  
-  // Network configuration for local testing
+  VERSION: "V2",
+  ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  INSPECTOR_ADDRESS: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
   NETWORK: {
     name: "localhost",
     chainId: 1337,
